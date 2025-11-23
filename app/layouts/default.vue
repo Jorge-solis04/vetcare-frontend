@@ -67,7 +67,7 @@
                 <UIcon name="i-lucide-user" class="w-4 h-4" />
               </UAvatar>
               <span class="ml-2 text-sm hidden sm:block">
-                {{ authStore.user?.email?.split('@')[0] || 'Usuario' }}
+                {{ authStore.user?.name?.split('@')[0] || 'Usuario' }}
               </span>
             </UButton>
           </UDropdownMenu>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useApiFetch } from "~/components/useApiFetch";
+import { useApiFetch } from "~/composables/useApiFetch";
 import { useAuthStore } from "~/store/auth";
 
 const toast = useToast();
