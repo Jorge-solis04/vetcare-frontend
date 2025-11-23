@@ -1,9 +1,15 @@
 <template>
-  <div>
+  <Uapp>
     <NuxtPage />
-  </div>
+  </Uapp>
 </template>
 
-<script setup>
-// Aquí podrías agregar lógica global si la necesitas
+<script setup lang="ts">
+import { useAuthStore } from '~/store/auth'
+
+const authStore = useAuthStore()
+
+onMounted(() => {
+  authStore.initializeAuth()
+})
 </script>

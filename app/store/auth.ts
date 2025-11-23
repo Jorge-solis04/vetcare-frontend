@@ -1,48 +1,68 @@
-// import { defineStore } from 'pinia'
-// import { ref } from 'vue'
+// app/store/auth.ts
+import { defineStore } from 'pinia'
+import type { User, AuthResponse } from '~~/types/index'
 
-// export const useAuthStore = defineStore('auth', () => {
-//   const token = ref<string | null>(null)
-//   const user = ref<any>(null)
+export const useAuthStore = defineStore('auth', {
+  state: () => ({
+    token: useCookie<string | null>('auth_token').value,
+    user: null as User | null,
+  }),
 
-//   // Inicializar desde localStorage si existe
-//   if (import.meta.client) {
-//     token.value = localStorage.getItem('token')
-//     const savedUser = localStorage.getItem('user')
-//     if (savedUser) {
-//       user.value = JSON.parse(savedUser)
-//     }
-//   }
+  getters: {
+    isAuthenticated: (state) => !!state.token,
+  },
 
-//   const setAuth = (newToken: string, newUser: any) => {
-//     token.value = newToken
-//     user.value = newUser
-    
-//     if (import.meta.client) {
-//       localStorage.setItem('token', newToken)
-//       localStorage.setItem('user', JSON.stringify(newUser))
-//     }
-//   }
+  actions: {
+    // Login - llamada al backend
+    async login(credentials: { formData: { email: string; password: string } }) {
+      const config = useRuntimeConfig()
+      
+      const response = await $fetch<AuthResponse>(`${config.public.apiBase}/auth/login`, {
+        method: 'POST',
+        body: credentials.formData
+      })
 
-//   const logout = () => {
-//     token.value = null
-//     user.value = null
-    
-//     if (import.meta.client) {
-//       localStorage.removeItem('token')
-//       localStorage.removeItem('user')
-//     }
-//   }
+      // Guardar sesión con los datos recibidos
+      this.setSession(response)
+    },
 
-//   const isAuthenticated = () => {
-//     return !!token.value
-//   }
+    // Guardar sesión (token + usuario)
+    setSession(data: AuthResponse) {
+      this.token = data.token
+      this.user = data.user
 
-//   return {
-//     token,
-//     user,
-//     setAuth,
-//     logout,
-//     isAuthenticated,
-//   }
-// })
+      // Guardar token en cookie
+      const tokenCookie = useCookie('auth_token', { maxAge: 86400 })
+      tokenCookie.value = data.token
+      
+      // Guardar usuario en cookie para persistencia
+      const userCookie = useCookie('auth_user', { maxAge: 86400 })
+      userCookie.value = JSON.stringify(data.user)
+    },
+
+    // Restaurar sesión desde cookies
+    restoreSession() {
+      const userCookie = useCookie<string>('auth_user')
+      if (userCookie.value && this.token) {
+        try {
+          this.user = JSON.parse(userCookie.value)
+        } catch (e) {
+          console.error('Error parsing user cookie:', e)
+          this.logout()
+        }
+      }
+    },
+
+    // Cerrar sesión
+    logout() {
+      this.token = null
+      this.user = null
+      
+      const tokenCookie = useCookie('auth_token')
+      tokenCookie.value = null
+      
+      const userCookie = useCookie('auth_user')
+      userCookie.value = null
+    }
+  }
+})
