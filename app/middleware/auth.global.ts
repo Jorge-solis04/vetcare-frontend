@@ -1,32 +1,25 @@
 // app/middleware/auth.global.ts
 import { useAuthStore } from '~/store/auth'
 
-export default defineNuxtRouteMiddleware((to, from) => {
+export default defineNuxtRouteMiddleware((to) => {
   const authStore = useAuthStore()
   
-  // Lista de rutas públicas (donde no necesitas login)
+  // Rutas públicas que no requieren autenticación
   const publicRoutes = ['/login']
-
-  // 1. Caso: El usuario NO está autenticado
-  if (!authStore.isAuthenticated) {
-    // Si intenta ir a una ruta que NO es pública...
-    if (!publicRoutes.includes(to.path)) {
-      // ...lo mandamos al login
-      return navigateTo('/login')
-    }
-  } 
   
-  // 2. Caso: El usuario SÍ está autenticado
-  else {
-    // Si intenta entrar al login estando ya logueado...
-    if (to.path === '/login') {
-      // ...lo mandamos al dashboard
-      return navigateTo('/')
-    }
+  // Si la ruta es pública, permitir acceso
+  if (publicRoutes.includes(to.path)) {
+    return
   }
-
-  // 3. Caso: Protección de Roles (Ejemplo para futuro)
-  // if (to.path.startsWith('/admin') && authStore.user?.role !== 'Admin') {
-  //   return navigateTo('/') // Acceso denegado
-  // }
+  
+  // Si no está autenticado, redirigir a login
+  if (!authStore.isAuthenticated) {
+    console.log('No autenticado, redirigiendo a login')
+    return navigateTo('/login')
+  }
+  
+  // Si está autenticado y trata de ir a login, redirigir al home
+  if (authStore.isAuthenticated && to.path === '/login') {
+    return navigateTo('/')
+  }
 })
