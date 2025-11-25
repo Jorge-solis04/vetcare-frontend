@@ -2,6 +2,6 @@
 </script>
 
 <template>
-    <h1>Dueños</h1>
+    <h1>Dueñossss</h1>
 </template>
 
