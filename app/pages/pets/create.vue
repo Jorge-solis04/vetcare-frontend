@@ -88,7 +88,7 @@ const handleSave = async (event: FormSubmitEvent<Schema>) => {
         <div>
           <h3 class="text-lg font-semibold mb-4 border-b-2 border-b-gray-300 pb-2 dark:border-gray-700">Información General</h3>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <UFormGroup label="Nombre de la Mascota" name="name" >
+            <UFormField label="Nombre de la Mascota" name="name" >
               <UInput 
                 v-model="state.name" 
                 color="success"
@@ -96,9 +96,9 @@ const handleSave = async (event: FormSubmitEvent<Schema>) => {
                 size="lg"
                 icon="i-lucide-paw-print"
               />
-            </UFormGroup>
+            </UFormField>
 
-            <UFormGroup label="Dueño Asignado" name="ownerId" >
+            <UFormField label="Dueño Asignado" name="ownerId" >
               <USelectMenu
                 color="success"
                 v-model="state.ownerId"
@@ -110,14 +110,14 @@ const handleSave = async (event: FormSubmitEvent<Schema>) => {
                 icon="i-lucide-user"
                 searchable
               />
-            </UFormGroup>
+            </UFormField>
           </div>
         </div>
 
         <div>
           <h3 class="text-lg font-semibold mb-4 border-b-2 border-b-gray-300 pb-2 dark:border-gray-700">Detalles Clínicos</h3>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <UFormGroup color="success" label="Especie" name="species" >
+            <UFormField color="success" label="Especie" name="species" >
               <USelect 
                 color="success"
                 
@@ -126,9 +126,9 @@ const handleSave = async (event: FormSubmitEvent<Schema>) => {
                 size="lg"
                 icon="i-lucide-heart"
               />
-            </UFormGroup>
+            </UFormField>
 
-            <UFormGroup label="Raza" name="breed" >
+            <UFormField label="Raza" name="breed" >
               <UInput 
                 color="success"
 
@@ -137,9 +137,9 @@ const handleSave = async (event: FormSubmitEvent<Schema>) => {
                 size="lg"
                 icon="i-lucide-dna"
               />
-            </UFormGroup>
+            </UFormField>
 
-            <UFormGroup label="Fecha de Nacimiento" name="birthDate"  class="col-span-1">
+            <UFormField label="Fecha de Nacimiento" name="birthDate"  class="col-span-1">
               <UInput 
                 color="success"
 
@@ -148,7 +148,7 @@ const handleSave = async (event: FormSubmitEvent<Schema>) => {
                 size="lg"
                 icon="i-lucide-calendar"
               />
-            </UFormGroup>
+            </UFormField>
           </div>
         </div>
 

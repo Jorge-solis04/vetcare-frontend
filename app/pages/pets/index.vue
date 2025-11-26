@@ -176,8 +176,10 @@ const handleDelete = async (id: string) => {
 
     <UTable 
       v-else
+      sticky
       :data="pets || []" 
       :columns="columns"
+      class="flex-1 max-h-[500px]"
       :empty-state="{ 
         icon: 'i-lucide-inbox', 
         label: 'No hay mascotas registradas' 
