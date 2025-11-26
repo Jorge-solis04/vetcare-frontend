@@ -41,7 +41,7 @@ export interface Pet {
   breed: string;
   birthDate: string;
   ownerId: string;
-  owner: Owner; // ✅ Objeto completo del dueño
+  owner: Owner; 
   createdAt: string;
   updatedAt: string;
 }
@@ -49,4 +49,36 @@ export interface Pet {
 export interface OwnerSummary {
   id: string;
   name: string;
+}
+
+export interface VetSummary{
+  id: string;
+  name: string;
+}
+
+export interface AppointmentToday {
+  createdAt: string;
+  date: string;
+  id: string;
+  pet: {
+    breed: string;
+    id: string;
+    name: string;
+    owner: {
+      id: string;
+      name?: string;
+    };
+    species: string;
+  };
+  petId: string;
+  status: string;
+  updatedAt: string;
+  vet: VetSummary;
+  vetId: string;
+}
+
+export interface DashboardStats {
+  appointmentsToday: AppointmentToday[];
+  appointmentsTodayCount: number;
+  expiringVaccines: any[]; // Puedes tipar esto después si lo usas
 }
