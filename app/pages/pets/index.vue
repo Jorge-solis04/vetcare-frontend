@@ -20,9 +20,11 @@ const columns: TableColumn<Pet>[] = [
     header: 'Especie',
     cell: ({ row }) => {
       const color = {
-        'Perro': 'amber' as const,
-        'Gato': 'blue' as const,
-        'Ave': 'green' as const,
+        'Perro': 'secondary' as const,
+        'Roedor': 'warning' as const,
+        'Gato': 'info' as const,
+        'Ave': 'primary' as const,
+        'Reptil': 'success' as const,
         'Otro': 'gray' as const
       }[row.getValue('species') as string] || 'gray' as const
 
@@ -95,11 +97,7 @@ function getRowItems(row: Row<Pet>) {
       label: 'Editar mascota',
       onSelect() {
 
-        toast.add({
-          title: 'Mascota editada correctamente!',
-          color: 'success',
-          icon: 'i-lucide-circle-check'
-        })
+        navigateTo(`/pets/${row.original.id}`)
       }
     },
     {
@@ -150,11 +148,11 @@ const handleDelete = async (id: string) => {
 <template>
   <div class="p-6">
     <div class="flex justify-between items-center mb-6">
-      <h1 class="text-2xl font-bold">Mascotas</h1>
+      <h1 class="text-3xl font-bold">Mascotas / Pacientes</h1>
       <UButton 
         @click="navigateTo('/pets/create')" 
         icon="i-lucide-plus"
-        color="primary"
+        class="bg-vetcare-500 hover:bg-vetcare-600 text-white cursor-pointer dark:bg-vetcare-500 dark:hover:bg-vetcare-500 dark:text-white"
       >
         Nueva Mascota
       </UButton>
@@ -164,11 +162,11 @@ const handleDelete = async (id: string) => {
       v-model="searchQuery" 
       placeholder="Buscar por nombre, especie o raza..."
       icon="i-lucide-search"
-      class="mb-6"
+      class="mb-6 w-full max-w-md"
     />
 
     <div v-if="pending" class="flex justify-center py-12">
-      <UIcon name="i-lucide-loader-2" class="w-8 h-8 animate-spin text-primary-500" />
+      <UIcon name="i-lucide-loader-2" class="w-8 h-8 animate-spin text-primary-500 " />
     </div>
 
     <div v-else-if="error" class="text-center py-12">
@@ -184,6 +182,18 @@ const handleDelete = async (id: string) => {
         icon: 'i-lucide-inbox', 
         label: 'No hay mascotas registradas' 
       }"
+      :ui="{
+    root: 'bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700',
+    base: 'bg-white dark:bg-gray-800',
+    thead: 'bg-gray-50 dark:bg-gray-900/50 text',
+    tbody: 'bg-white dark:bg-gray-800',
+    tr: {
+      base: 'hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors',
+      selected: 'bg-gray-100 dark:bg-gray-700'
+    },
+    th: 'text-gray-900 dark:text-gray-100 font-semibold text-base',
+    td: 'text-gray-700 dark:text-gray-300 text-base',
+  }"
     >
      
 

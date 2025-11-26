@@ -7,7 +7,7 @@
       @mouseleave="expanded = false"
     >
       <div class="p-6 flex items-center gap-2 h-20 overflow-hidden">
-        <UIcon name="i-lucide-paw-print" class="text-primary-500 w-8 h-8 flex-shrink-0" />
+        <UIcon name="i-lucide-paw-print" class="text-vetcare-500 w-8 h-8 flex-shrink-0" />
         <span 
           class="text-xl font-bold text-blue-900 dark:text-white whitespace-nowrap transition-opacity duration-300"
           :class="expanded ? 'opacity-100' : 'opacity-0'"
@@ -23,7 +23,7 @@
             :key="link.to"
             :to="link.to"
             class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-gray-100 dark:hover:bg-gray-800"
-            active-class="bg-primary-50 text-primary-600 dark:bg-primary-900/20 dark:text-primary-400"
+            active-class="bg-vetcare-50 text-vetcare-700 dark:bg-vetcare-900/20 dark:text-vetcare-400"
           >
             <UIcon :name="link.icon" class="w-5 h-5 flex-shrink-0" />
             <span 

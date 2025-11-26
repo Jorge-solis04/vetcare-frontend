@@ -48,7 +48,7 @@ const handleLogin = async () => {
   <UCard class="shadow-xl">
     <template #header>
       <div class="flex flex-col items-center gap-4 py-4">
-        <UIcon name="i-lucide-paw-print" class="text-primary-500 w-12 h-12" />
+        <UIcon name="i-lucide-paw-print" class="text-vetcare-500 w-12 h-12" />
         <div class="text-center">
           <h1 class="text-2xl font-bold text-gray-900 dark:text-white">VetCare</h1>
           <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Sistema de Gestión Veterinaria</p>
@@ -58,11 +58,12 @@ const handleLogin = async () => {
 
     <UForm :state="formData" @submit="handleLogin" class="space-y-4">
       
-      <UFormGroup label="Correo Electrónico" name="email" required>
+      <UFormGroup label="Correo Electrónico" name="email"  required>
         <UInput 
           v-model="formData.email" 
           type="email" 
           icon="i-lucide-mail"
+          class="w-full mb-3"
           placeholder="correo@ejemplo.com"
           size="lg"
         />
@@ -75,6 +76,7 @@ const handleLogin = async () => {
           icon="i-lucide-lock"
           placeholder="••••••••"
           size="lg"
+          class="w-full"
         />
       </UFormGroup>
 
@@ -82,6 +84,7 @@ const handleLogin = async () => {
         type="submit" 
         block 
         size="lg" 
+        color="success"
         :loading="loading"
         class="mt-6"
       >
