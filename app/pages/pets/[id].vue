@@ -174,6 +174,8 @@ const handleUpdate = async (event: FormSubmitEvent<Schema>) => {
           </div>
         </div>
 
+       
+
         
 
         <div class="flex justify-end items-center gap-4 pt-4 border-t border-gray-100 dark:border-gray-700">
@@ -188,7 +190,7 @@ const handleUpdate = async (event: FormSubmitEvent<Schema>) => {
           </UButton>
           <UButton 
             type="submit" 
-            color="primary" 
+            color="success" 
             size="lg"
             :loading="loading"
             icon="i-lucide-save"

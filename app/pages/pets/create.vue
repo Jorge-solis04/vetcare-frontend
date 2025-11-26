@@ -166,7 +166,7 @@ const handleSave = async (event: FormSubmitEvent<Schema>) => {
           </UButton>
           <UButton 
             type="submit" 
-            color="primary" 
+            color="success" 
             size="lg"
             :loading="loading"
             :disabled="!state.name || !state.species || !state.breed || !state.birthDate || !state.ownerId"
