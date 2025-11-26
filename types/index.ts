@@ -14,6 +14,12 @@ export interface Owner {
   createdAt?: string;
 }
 
+export interface OwnerPayload {
+  name: string;
+  phone?: string;
+  email?: string;
+}
+
 export interface AuthResponse {
   token: string;
   user: User;
