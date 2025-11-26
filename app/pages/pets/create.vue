@@ -152,11 +152,7 @@ const handleSave = async (event: FormSubmitEvent<Schema>) => {
           </div>
         </div>
 
-        <!-- Preview de los datos -->
-        <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
-          <h4 class="text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Vista previa del JSON:</h4>
-          <pre class="text-xs bg-gray-900 text-green-400 p-3 rounded overflow-x-auto">{{ JSON.stringify(state, null, 2) }}</pre>
-        </div>
+        
 
         <div class="flex justify-end items-center gap-4 pt-4 border-t border-gray-100 dark:border-gray-800">
           <UButton 
@@ -170,7 +166,7 @@ const handleSave = async (event: FormSubmitEvent<Schema>) => {
           </UButton>
           <UButton 
             type="submit" 
-            color="primary" 
+            color="success" 
             size="lg"
             :loading="loading"
             :disabled="!state.name || !state.species || !state.breed || !state.birthDate || !state.ownerId"
