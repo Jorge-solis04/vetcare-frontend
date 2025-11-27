@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import type { PetPayload, Owner } from '~~/types'
-import { z } from 'zod'
-import type { FormSubmitEvent } from '#ui/types'
+import type { PetPayload } from '~~/types'
 
 const route = useRoute()
 const router = useRouter()
@@ -9,41 +7,25 @@ const toast = useToast()
 
 const petId = route.params.id as string
 
-const schema = z.object({
-  name: z.string().min(3, 'El nombre debe tener al menos 3 caracteres'),
-  species: z.string().min(1, 'La especie es obligatoria'),
-  breed: z.string().min(2, 'La raza debe tener al menos 2 caracteres'),
-  birthDate: z.string().min(1, 'La fecha de nacimiento es obligatoria'),
-  ownerId: z.string().min(1, 'Debe seleccionar un dueño')
-})
-
-type Schema = z.output<typeof schema>
-
 const { updatePet, getPetById } = usePets()
-const { allOwners, pending: loadingOwners } = useOwners()
-
-const state = reactive<PetPayload>({
-  name: '',
-  species: '',
-  breed: '',
-  birthDate: '',
-  ownerId: ''
-})
 
 const loading = ref(false)
 const loadingPet = ref(true)
+const petData = ref<PetPayload>()
 
-// Cargar datos de la mascota
+// ✅ Cargar datos de la mascota
 onMounted(async () => {
   try {
     const pet = await getPetById(petId)
-    
+    console.log('pet', pet)
     if (pet) {
-      state.name = pet.name
-      state.species = pet.species
-      state.breed = pet.breed
-      state.birthDate = pet.birthDate.split('T')[0]
-      state.ownerId = pet.ownerId
+      petData.value = {
+        name: pet.name,
+        species: pet.species,
+        breed: pet.breed,
+        birthDate: pet.birthDate,
+        ownerId: pet.ownerId
+      }
     }
   } catch (error) {
     toast.add({
@@ -58,18 +40,10 @@ onMounted(async () => {
   }
 })
 
-const ownersOptions = computed(() => {
-  if (!allOwners.value) return []
-  return allOwners.value.map((owner: Owner) => ({
-    label: owner.name,
-    value: owner.id
-  }))
-})
-
-const handleUpdate = async (event: FormSubmitEvent<Schema>) => {
+const handleUpdate = async (data: PetPayload) => {
   loading.value = true
   try {
-    await updatePet(petId, event.data)
+    await updatePet(petId, data)
     
     toast.add({
       title: 'Mascota actualizada',
@@ -93,6 +67,10 @@ const handleUpdate = async (event: FormSubmitEvent<Schema>) => {
     loading.value = false
   }
 }
+
+const handleCancel = () => {
+  router.push('/pets')
+}
 </script>
 
 <template>
@@ -113,92 +91,14 @@ const handleUpdate = async (event: FormSubmitEvent<Schema>) => {
       <UIcon name="i-lucide-loader-2" class="w-8 h-8 animate-spin text-primary-500" />
     </div>
 
-    <div v-else class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-8 ">
-      <UForm :state="state" :schema="schema" @submit="handleUpdate" class="space-y-8">
-        <div>
-          <h3 class="text-lg font-semibold mb-4 border-b-2 border-b-gray-300 pb-2 dark:border-gray-700">Información General</h3>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <UFormGroup label="Nombre de la Mascota" name="name">
-              <UInput 
-                v-model="state.name" 
-                placeholder="Ej. Firulais" 
-                size="lg"
-                icon="i-lucide-paw-print"
-              />
-            </UFormGroup>
-
-            <UFormGroup label="Dueño Asignado" name="ownerId">
-              <USelectMenu
-                v-model="state.ownerId"
-                :items="ownersOptions"
-                value-key="value"
-                placeholder="Buscar dueño..."
-                size="lg"
-                :loading="loadingOwners"
-                icon="i-lucide-user"
-                searchable
-              />
-            </UFormGroup>
-          </div>
-        </div>
-
-        <div>
-          <h3 class="text-lg font-semibold mb-4 border-b-2 border-b-gray-300 pb-2 dark:border-gray-700">Detalles Clínicos</h3>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <UFormGroup label="Especie" name="species">
-              <USelect 
-                v-model="state.species" 
-                :items="['Perro', 'Gato', 'Ave', 'Roedor', 'Reptil', 'Otro']" 
-                size="lg"
-                icon="i-lucide-heart"
-              />
-            </UFormGroup>
-
-            <UFormGroup label="Raza" name="breed">
-              <UInput 
-                v-model="state.breed" 
-                placeholder="Ej. Mestizo / Labrador" 
-                size="lg"
-                icon="i-lucide-dna"
-              />
-            </UFormGroup>
-
-            <UFormGroup label="Fecha de Nacimiento" name="birthDate" class="col-span-1">
-              <UInput 
-                v-model="state.birthDate" 
-                type="date" 
-                size="lg"
-                icon="i-lucide-calendar"
-              />
-            </UFormGroup>
-          </div>
-        </div>
-
-       
-
-        
-
-        <div class="flex justify-end items-center gap-4 pt-4 border-t border-gray-100 dark:border-gray-700">
-          <UButton 
-            to="/pets"
-            color="neutral" 
-            variant="ghost" 
-            size="lg"
-            icon="i-lucide-x"
-          >
-            Cancelar
-          </UButton>
-          <UButton 
-            type="submit" 
-            color="success" 
-            size="lg"
-            :loading="loading"
-            icon="i-lucide-save"
-          >
-            Actualizar Paciente
-          </UButton>
-        </div>
-      </UForm>
+    <div v-else class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-8">
+      <PetsForm 
+        :initial-data="petData"
+        :loading="loading"
+        submit-label="Actualizar Paciente"
+        @submit="handleUpdate"
+        @cancel="handleCancel"
+      />
     </div>
   </div>
 </template>
