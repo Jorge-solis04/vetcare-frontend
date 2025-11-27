@@ -93,6 +93,30 @@ const completeAppointment = async(id: string, data: AppointmentPayload) =>{
   }
 }
 
+const reactivateAppointment = async(id: string, data: AppointmentPayload) =>{
+  const newData: AppointmentPayload = { ...data, status: 'SCHEDULED' }
+
+  try {
+    await updateAppointment(id, newData)
+    await loadAppointments()
+    toast.add({
+      title: 'Cita reactivada',
+      description: 'La cita ha sido reactivada exitosamente.',
+      color: 'success',
+      duration: 3000,
+    })
+  } catch (error) {
+    console.error('Error updating appointment:', error)
+    toast.add({
+      title: 'Error',
+      icon: 'i-lucide-alert-circle',
+      description: 'No se pudo reactivar la cita. Inténtalo de nuevo.',
+      color: 'error',
+      duration: 3000,
+    })
+  }
+}
+
 // ✅ Formatear fecha para mostrar
 const formattedDate = computed(() => {
   if (!selectedDate.value) return ''
@@ -150,6 +174,7 @@ const formattedDate = computed(() => {
               :appointmentData="appointment"
               @cancel="cancelAppointment"
               @complete="completeAppointment"
+              @reactivate="reactivateAppointment"
             />
           </div>
         </div>

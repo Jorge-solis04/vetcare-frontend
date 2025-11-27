@@ -10,12 +10,14 @@ const appointment = props.appointmentData
 const emit = defineEmits<{
   (e: 'cancel', id: string, data: AppointmentPayload): void
   (e: 'complete', id: string, data: AppointmentPayload): void
+  (e: 'reactivate', id: string, data: AppointmentPayload): void
 }>()
 
 const items = ref<DropdownMenuItem[]>([
   [{
     label: 'Reprogramar Cita',
     icon: 'i-lucide-edit-2',
+    disabled: appointment.status === 'COMPLETED' || appointment.status === 'CANCELLED',
     onSelect() {
       console.log('Reprogramar Cita clicked', appointment.id);
         navigateTo(`/appointments/${appointment.id}`);
@@ -39,7 +41,18 @@ const items = ref<DropdownMenuItem[]>([
    onSelect: () => {
       emit('cancel', appointment.id, appointment)
     }
-  }],
+  },
+  {
+    label: 'Reactivar Cita',
+    icon: 'i-lucide-refresh-ccw',
+    color: 'warning',
+    disabled: appointment.status === 'SCHEDULED' ,
+    
+   onSelect: () => {
+      emit('reactivate', appointment.id, appointment)
+    }
+  }
+],
   
   
 ])
@@ -73,7 +86,7 @@ const hourToAppointment = (appointment: Appointment) => new Date(appointment.dat
                             color="neutral" 
                             variant="ghost" 
                             size="md" 
-                            :disabled="appointment.status === 'CANCELLED'"
+                            
                         />
                     </UDropdownMenu>
                     <UBadge 
