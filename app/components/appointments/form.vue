@@ -106,7 +106,7 @@ onMounted(() => {
             icon="i-lucide-dog"
             class="w-auto"
             searchable
-            :disabled="state.petId !== ''"
+            :disabled="!!props.initialData?.petId"
             :content="{ align: 'start' }" 
             :ui="{ content: 'w-full' }"
           >
@@ -125,7 +125,7 @@ onMounted(() => {
             :loading="loadingVets"
             icon="i-lucide-stethoscope"
             searchable
-            :disabled="state.vetId !== ''"
+            :disabled="!!props.initialData?.vetId"
             :content="{ align: 'start' }" 
             :ui="{ content: 'w-full' }"
           >
