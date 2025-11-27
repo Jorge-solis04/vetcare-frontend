@@ -77,8 +77,49 @@ export interface AppointmentToday {
   vetId: string;
 }
 
+export interface Appointment {
+  id: string
+  date: string
+  petId: string
+  vetId: string
+  status: 'SCHEDULED' | 'COMPLETED' | 'CANCELLED'
+  notes?: string
+  pet: {
+    id: string
+    name: string
+    species: string
+    breed: string
+    owner: {
+      id: string
+      name: string
+      phone: string
+    }
+  }
+  vet: {
+    id: string
+    name: string
+    email: string
+  }
+  createdAt: string
+  updatedAt: string
+}
+
+export interface AppointmentPayload {
+  date: string      
+  petId: string
+  vetId: string
+  status?: 'SCHEDULED' | 'COMPLETED' | 'CANCELLED'
+}
+
+export interface Vet {
+  id: string;
+  name: string;
+  speacility: string;
+  isActive: boolean;
+}
+
 export interface DashboardStats {
   appointmentsToday: AppointmentToday[];
   appointmentsTodayCount: number;
-  expiringVaccines: any[]; // Puedes tipar esto después si lo usas
+  expiringVaccines: any[]; 
 }
