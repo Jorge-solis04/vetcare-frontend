@@ -93,14 +93,23 @@ function getRowItems(row: Row<Pet>) {
       label: "Acciones",
     },
     {
-      label: "Editar mascota",
+      label: "Ver detalles",
+      icon: "i-lucide-eye",
       onSelect() {
         navigateTo(`/pets/${row.original.id}`);
       },
     },
     {
+      label: "Editar mascota",
+      icon: "i-lucide-edit-2",
+      onSelect() {
+        navigateTo(`/pets/${row.original.id}/edit`);
+      },
+    },
+    {
       label: "Eliminar mascota",
-      color: "danger",
+      icon: "i-lucide-trash",
+      color: "error",
       onSelect() {
         handleDelete(row.original.id);
       },

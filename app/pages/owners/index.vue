@@ -4,18 +4,16 @@ import type { TableColumn} from "@nuxt/ui"
 import type { Row } from "@tanstack/vue-table";
 import type { Owner } from '../../../types'
 
-// 1. Usamos el composable de Owners
 const { owners, pending, searchQuery, deleteOwner } = useOwners()
 const toast = useToast()
 
-// 2. Manejador de eliminación
 const handleDelete = async (id: number) => {
   if (!confirm(`¿Estás seguro de eliminar este dueño?`)) return
   try {
     await deleteOwner(id.toString()) // Asumiendo que tu composable espera string
-    toast.add({ title: 'Dueño eliminado', color: 'green' })
+    toast.add({ title: 'Dueño eliminado', color: 'success' })
   } catch (e) {
-    toast.add({ title: 'Error al eliminar', color: 'red' })
+    toast.add({ title: 'Error al eliminar', color: 'error' })
   }
 }
 

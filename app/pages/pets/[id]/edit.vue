@@ -13,7 +13,6 @@ const loading = ref(false)
 const loadingPet = ref(true)
 const petData = ref<PetPayload>()
 
-// ✅ Cargar datos de la mascota
 onMounted(async () => {
   try {
     const pet = await getPetById(petId)
