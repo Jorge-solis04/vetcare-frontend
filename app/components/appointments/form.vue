@@ -70,19 +70,30 @@ const handleCancel = () => {
 const dateOnly = ref('')
 const timeOnly = ref('')
 
-// Watch para combinar fecha y hora en formato ISO
+// ✅ Watch para combinar fecha y hora en formato ISO (corregido)
 watch([dateOnly, timeOnly], ([date, time]) => {
   if (date && time) {
-    state.date = `${date}T${time}:00.000Z`
+    // Crear fecha local y convertir a ISO
+    const localDate = new Date(`${date}T${time}`)
+    state.date = localDate.toISOString()
   }
 })
 
-// Si hay datos iniciales, separar fecha y hora
+// ✅ Si hay datos iniciales, separar fecha y hora (corregido)
 onMounted(() => {
   if (props.initialData?.date) {
     const isoDate = new Date(props.initialData.date)
-    dateOnly.value = isoDate.toISOString().split('T')[0]
-    timeOnly.value = isoDate.toTimeString().slice(0, 5)
+    
+    // Obtener fecha en formato local
+    const year = isoDate.getFullYear()
+    const month = String(isoDate.getMonth() + 1).padStart(2, '0')
+    const day = String(isoDate.getDate()).padStart(2, '0')
+    dateOnly.value = `${year}-${month}-${day}`
+    
+    // Obtener hora en formato local
+    const hours = String(isoDate.getHours()).padStart(2, '0')
+    const minutes = String(isoDate.getMinutes()).padStart(2, '0')
+    timeOnly.value = `${hours}:${minutes}`
   }
 })
 </script>

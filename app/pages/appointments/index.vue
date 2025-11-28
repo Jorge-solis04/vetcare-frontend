@@ -117,10 +117,15 @@ const reactivateAppointment = async(id: string, data: AppointmentPayload) =>{
   }
 }
 
-// ✅ Formatear fecha para mostrar
+// ✅ Formatear fecha para mostrar (corregido)
 const formattedDate = computed(() => {
   if (!selectedDate.value) return ''
-  return new Date(dateString.value).toLocaleDateString('es-ES', {
+  
+  // Usar directamente los valores del CalendarDate sin conversión a Date
+  const date = selectedDate.value
+  const jsDate = new Date(date.year, date.month - 1, date.day)
+  
+  return jsDate.toLocaleDateString('es-ES', {
     weekday: 'long',
     year: 'numeric',
     month: 'long',
