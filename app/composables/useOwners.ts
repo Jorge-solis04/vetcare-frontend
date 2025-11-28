@@ -34,7 +34,8 @@ export const useOwners = () => {
     return owners.value.filter(owner => 
       owner.name?.toLowerCase().includes(query) ||
       owner.email?.toLowerCase().includes(query) ||
-      owner.phone?.toLowerCase().includes(query)
+      owner.phone?.toLowerCase().includes(query) ||
+      owner.createdAt?.toLowerCase().includes(query)
     )
   })
 
