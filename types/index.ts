@@ -14,6 +14,8 @@ export interface Owner {
   createdAt?: string;
 }
 
+export type CreateOwnerInput = Omit<Owner, 'id' | 'createdAt'>;
+
 export interface OwnerPayload {
   name: string;
   phone?: string;
@@ -123,3 +125,4 @@ export interface DashboardStats {
   appointmentsTodayCount: number;
   expiringVaccines: any[]; 
 }
+

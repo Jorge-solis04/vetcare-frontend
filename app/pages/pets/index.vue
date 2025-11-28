@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { h, resolveComponent } from "vue";
 import type { TableColumn } from "@nuxt/ui";
-import type { Pet } from "~~/types";
+import type { Pet } from '../../../types'
 import type { Row } from "@tanstack/vue-table";
 const toast = useToast();
 const UButton = resolveComponent("UButton");
