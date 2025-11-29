@@ -57,12 +57,14 @@ const cancelAppointment = async (id: string, data: AppointmentPayload) => {
       color: 'success',
       duration: 3000,
     })
-  } catch (error) {
+  } catch (error:any) {
+    const errorMessage = error?.data?.message || 'Error al crear la mascota'
+
     console.error('Error deleting appointment:', error)
     toast.add({
       title: 'Error',
       icon: 'i-lucide-alert-circle',
-      description: 'No se pudo cancelar la cita. Inténtalo de nuevo.',
+      description: errorMessage,
       color: 'error',
       duration: 3000,
     })
@@ -81,12 +83,13 @@ const completeAppointment = async(id: string, data: AppointmentPayload) =>{
       color: 'success',
       duration: 3000,
     })
-  } catch (error) {
+  } catch (error:any) {
+    const errorMessage = error?.data?.message || 'Error al crear la mascota'
     console.error('Error updating appointment:', error)
     toast.add({
       title: 'Error',
       icon: 'i-lucide-alert-circle',
-      description: 'No se pudo completar la cita. Inténtalo de nuevo.',
+      description: errorMessage,
       color: 'error',
       duration: 3000,
     })
@@ -105,12 +108,13 @@ const reactivateAppointment = async(id: string, data: AppointmentPayload) =>{
       color: 'success',
       duration: 3000,
     })
-  } catch (error) {
+  } catch (error:any) {
+    const errorMessage = error?.data?.message || 'Error al crear la mascota'
     console.error('Error updating appointment:', error)
     toast.add({
       title: 'Error',
       icon: 'i-lucide-alert-circle',
-      description: 'No se pudo reactivar la cita. Inténtalo de nuevo.',
+      description: errorMessage,
       color: 'error',
       duration: 3000,
     })

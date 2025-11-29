@@ -111,8 +111,8 @@ const userItems = [
   [{
     label: 'Mi Perfil',
     icon: 'i-lucide-user',
-    click: () => {
-      // Navegar a perfil
+    onSelect: () => {
+      navigateTo('/auth/')
     }
   }],
   [{

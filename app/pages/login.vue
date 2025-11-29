@@ -38,6 +38,12 @@ const handleLogin = async () => {
   } catch (error: any) {
     console.error(error)
     errorMessages.value = 'Error al iniciar sesión. Verifica tus datos.'
+    toast.add({
+      title: 'Error',
+      description: errorMessages.value,
+      color: 'error',
+      icon: 'i-lucide-x-circle',
+    })
   } finally {
     loading.value = false
   }
