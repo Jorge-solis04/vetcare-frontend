@@ -126,3 +126,20 @@ export interface DashboardStats {
   expiringVaccines: any[]; 
 }
 
+export interface Treatment {
+  id: string
+  description: string
+  start: string
+  end: string
+  petId: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface TreatmentPayload {
+  description: string
+  start: string
+  end: string
+  petId: string
+}
+

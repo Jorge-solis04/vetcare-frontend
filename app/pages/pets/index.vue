@@ -148,6 +148,7 @@ const handleDelete = async (id: string) => {
     });
   }
 };
+
 </script>
 
 <template>

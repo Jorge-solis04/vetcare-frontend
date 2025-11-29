@@ -19,6 +19,7 @@ const formatTime = (dateString: string) => {
 }
 
 console.log('Stats:', stats.value)
+
 </script>
 
 <template>
