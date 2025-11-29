@@ -1,48 +1,40 @@
 <script setup lang="ts">
-import { h, resolveComponent } from "vue";
 import type { TableColumn } from "@nuxt/ui";
-import type { Pet } from '../../../types'
+import { h, resolveComponent } from "vue";
 import type { Row } from "@tanstack/vue-table";
 const toast = useToast();
 const UButton = resolveComponent("UButton");
 const UBadge = resolveComponent("UBadge");
 const UDropdownMenu = resolveComponent("UDropdownMenu");
+import type { Vaccine, VaccinePayload } from "~~/types";
 
-const columns: TableColumn<Pet>[] = [
+const { vaccines, allVaccines, pending, error, searchQuery, deleteVaccine } = useVaccines();
+
+const columns: TableColumn<Vaccine>[] = [
   {
     accessorKey: "name",
     header: "Nombre",
-    cell: ({ row }) => row.getValue("name"),
-  },
-  {
-    accessorKey: "species",
-    header: "Especie",
     cell: ({ row }) => {
       const color =
         {
-          Perro: "secondary" as const,
-          Roedor: "warning" as const,
-          Gato: "info" as const,
-          Ave: "primary" as const,
-          Reptil: "success" as const,
-          Otro: "gray" as const,
-        }[row.getValue("species") as string] || ("gray" as const);
+          Moquillo: "secondary" as const,
+          Parvovirus: "warning" as const,
+          Rabia: "error" as const,
+          Rinotraqueítis: "primary" as const,
+          LeucemiaFelina: "success" as const,
+          FiebreAftosa: "neutral" as const,
+        }[row.getValue("name") as string] || ("neutral" as const);
 
       return h(UBadge, { class: "capitalize", variant: "subtle", color }, () =>
-        row.getValue("species")
+        row.getValue("name")
       );
     },
   },
   {
-    accessorKey: "breed",
-    header: "Raza",
-    cell: ({ row }) => row.getValue("breed"),
-  },
-  {
-    accessorKey: "birthDate",
-    header: "Fecha de Nacimiento",
+    accessorKey: "appliedDate",
+    header: "Fecha de Aplicación",
     cell: ({ row }) => {
-      const date = new Date(row.getValue("birthDate") as string);
+      const date = new Date(row.getValue("appliedDate") as string);
       return date.toLocaleDateString("es-ES", {
         day: "2-digit",
         month: "short",
@@ -51,11 +43,23 @@ const columns: TableColumn<Pet>[] = [
     },
   },
   {
-    accessorKey: "owner",
-    header: "Dueño",
+    accessorKey: "nextDose",
+    header: "Próxima Dosis",
     cell: ({ row }) => {
-      const owner = row.original.owner; // ✅ Acceder al objeto owner completo
-      return owner?.name || "Sin dueño";
+      const date = new Date(row.getValue("nextDose") as string);
+      return date.toLocaleDateString("es-ES", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      });
+    },
+  },
+  {
+    accessorKey: "pet",
+    header: "Nombre de la Mascota",
+    cell: ({ row }) => {
+      const pet = row.original.pet;
+      return pet?.name || "Sin mascota";
     },
   },
   {
@@ -86,7 +90,8 @@ const columns: TableColumn<Pet>[] = [
     },
   },
 ];
-function getRowItems(row: Row<Pet>) {
+
+function getRowItems(row: Row<Vaccine>) {
   return [
     {
       type: "label",
@@ -96,18 +101,18 @@ function getRowItems(row: Row<Pet>) {
       label: "Ver detalles",
       icon: "i-lucide-eye",
       onSelect() {
-        navigateTo(`/pets/${row.original.id}`);
+        navigateTo(`/vaccines/${row.original.id}`);
       },
     },
     {
-      label: "Editar mascota",
+      label: "Editar vacuna",
       icon: "i-lucide-edit-2",
       onSelect() {
-        navigateTo(`/pets/${row.original.id}/edit`);
+        navigateTo(`/vaccines/${row.original.id}/edit`);
       },
     },
     {
-      label: "Eliminar mascota",
+      label: "Eliminar vacuna",
       icon: "i-lucide-trash",
       color: "error",
       onSelect() {
@@ -116,28 +121,26 @@ function getRowItems(row: Row<Pet>) {
     },
   ];
 }
-const { pets, pending, error, searchQuery, deletePet } = usePets();
 
 const handleDelete = async (id: string) => {
-  if (!confirm("¿Estás seguro de eliminar esta mascota?")) {
+  if (!confirm("¿Estás seguro de eliminar esta vacuna?")) {
     return;
   }
 
   try {
-    await deletePet(id);
+    await deleteVaccine(id);
 
     toast.add({
-      title: "Mascota eliminada",
-      description: "La mascota se ha eliminado correctamente",
+      title: "Vacuna eliminada",
+      description: "La vacuna se ha eliminado correctamente",
       color: "success",
       icon: "i-lucide-check-circle",
     });
   } catch (error: any) {
     console.error("Error al eliminar:", error);
 
-    // Extraer el mensaje del backend
     const errorMessage =
-      error?.data?.message || error?.message || "Error al eliminar la mascota";
+      error?.data?.message || error?.message || "Error al eliminar la vacuna";
 
     toast.add({
       title: "Error al eliminar",
@@ -148,20 +151,19 @@ const handleDelete = async (id: string) => {
     });
   }
 };
-
 </script>
 
 <template>
   <UiLayout
-    title="Gestión de Pacientes"
-    buttonTitle="Nuevo Paciente"
-    path="/pets/create"
-    description="Visualiza, registra y gestiona todos los pacientes."
-    icon="dog"
+    title="Gestión de Vacunas"
+    buttonTitle="Nueva Dosis"
+    path="/vaccines/create"
+    description="Visualiza, registra y gestiona todas las vacunas aplicadas."
+    icon="syringe"
   >
     <UInput
       v-model="searchQuery"
-      placeholder="Buscar por nombre, especie o raza..."
+      placeholder="Buscar por vacuna o nombre del paciente..."
       icon="i-lucide-search"
       class="mb-6 w-full max-w-md"
     />
@@ -178,18 +180,18 @@ const handleDelete = async (id: string) => {
         name="i-lucide-alert-circle"
         class="w-12 h-12 text-red-500 mx-auto mb-4"
       />
-      <p class="text-red-600">Error al cargar las mascotas</p>
+      <p class="text-red-600">Error al cargar las vacunas</p>
     </div>
 
     <UTable
       v-else
       sticky
-      :data="pets || []"
+      :data="vaccines || []"
       :columns="columns"
       class="flex-1 max-h-[500px]"
       :empty-state="{
         icon: 'i-lucide-inbox',
-        label: 'No hay mascotas registradas',
+        label: 'No hay vacunas registradas',
       }"
       :ui="{
         root: 'bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700',

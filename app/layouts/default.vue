@@ -94,9 +94,10 @@ const toggleDark = () => {
 
 const links = [
   { label: 'Dashboard', icon: 'i-lucide-layout-dashboard', to: '/' }, 
+  { label: 'Agenda', icon: 'i-lucide-calendar', to: '/appointments/' },
   { label: 'Dueños', icon: 'i-lucide-users', to: '/owners/' },
   { label: 'Pacientes', icon: 'i-lucide-cat', to: '/pets/' },
-  { label: 'Agenda', icon: 'i-lucide-calendar', to: '/appointments/' },
+  {label: 'Vacunas', icon:"i-lucide-syringe", to: '/vaccines/' }
 ]
 
 const logout = async () => {
