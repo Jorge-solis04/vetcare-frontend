@@ -157,68 +157,7 @@ const handleDeleteTreatment = async (id: string) => {
   }
 }
 
-const handleOpenVaccineModal = (vaccine?: any) => {
-  editingVaccine.value = vaccine || null
-  showVaccineModal.value = true
-}
 
-const handleCloseVaccineModal = () => {
-  showVaccineModal.value = false
-  editingVaccine.value = null
-}
-
-const handleSubmitVaccine = async (data: VaccinePayload) => {
-  try {
-    if (editingVaccine.value) {
-      await updateVaccine(editingVaccine.value.id, data)
-      toast.add({
-        title: 'Vacuna actualizada',
-        description: 'Los cambios se han guardado correctamente',
-        color: 'success',
-        icon: 'i-lucide-check-circle'
-      })
-    } else {
-      await createVaccine(data)
-      toast.add({
-        title: 'Vacuna registrada',
-        description: 'La vacuna se ha registrado correctamente',
-        color: 'success',
-        icon: 'i-lucide-check-circle'
-      })
-    }
-    
-    handleCloseVaccineModal()
-    await loadPet()
-  } catch (error: any) {
-    toast.add({
-      title: 'Error',
-      description: error?.data?.message || 'Error al guardar la vacuna',
-      color: 'error',
-      icon: 'i-lucide-alert-circle'
-    })
-  }
-}
-
-const handleDeleteVaccine = async (id: string) => {
-  try {
-    await deleteVaccine(id)
-    
-    toast.add({
-      title: 'Vacuna eliminada',
-      color: 'success',
-      icon: 'i-lucide-check-circle'
-    })
-    
-    await loadPet()
-  } catch (error: any) {
-    toast.add({
-      title: 'Error',
-      description: error?.data?.message || 'Error al eliminar',
-      color: 'error',
-      icon: 'i-lucide-alert-circle'
-    })
-  }
-}
 </script>
 
 <template>
