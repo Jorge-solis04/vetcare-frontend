@@ -143,3 +143,18 @@ export interface TreatmentPayload {
   petId: string
 }
 
+export interface Vaccine {
+  id: string
+  name: string
+  appliedDate: string
+  nextDose : string 
+  petId: string
+  createdAt: string
+}
+
+export interface VaccinePayload{
+  name: string
+  appliedDate: string
+  nextDose : string
+  petId: string
+}

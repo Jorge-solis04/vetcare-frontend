@@ -2,18 +2,23 @@
 const route = useRoute()
 const router = useRouter()
 const toast = useToast()
-import type { TreatmentPayload } from '~~/types'
+import type { TreatmentPayload, VaccinePayload } from '~~/types'
+
 const petId = route.params.id as string
 
 const { getPetById, deletePet } = usePets()
 const { createTreatment, updateTreatment, deleteTreatment } = useTreatments()
+const { createVaccine, updateVaccine, deleteVaccine } = useVaccines()
 
 const loadingPet = ref(true)
 const pet = ref<any>(null)
 
 const showTreatmentModal = ref(false)
 const loadingTreatment = ref(false)
-const   editingTreatment = ref<any>(null)
+const editingTreatment = ref<any>(null)
+
+const showVaccineModal = ref(false)
+const editingVaccine = ref<any>(null)
 
 const loadPet = async () => {
   try {
@@ -151,6 +156,69 @@ const handleDeleteTreatment = async (id: string) => {
     })
   }
 }
+
+const handleOpenVaccineModal = (vaccine?: any) => {
+  editingVaccine.value = vaccine || null
+  showVaccineModal.value = true
+}
+
+const handleCloseVaccineModal = () => {
+  showVaccineModal.value = false
+  editingVaccine.value = null
+}
+
+const handleSubmitVaccine = async (data: VaccinePayload) => {
+  try {
+    if (editingVaccine.value) {
+      await updateVaccine(editingVaccine.value.id, data)
+      toast.add({
+        title: 'Vacuna actualizada',
+        description: 'Los cambios se han guardado correctamente',
+        color: 'success',
+        icon: 'i-lucide-check-circle'
+      })
+    } else {
+      await createVaccine(data)
+      toast.add({
+        title: 'Vacuna registrada',
+        description: 'La vacuna se ha registrado correctamente',
+        color: 'success',
+        icon: 'i-lucide-check-circle'
+      })
+    }
+    
+    handleCloseVaccineModal()
+    await loadPet()
+  } catch (error: any) {
+    toast.add({
+      title: 'Error',
+      description: error?.data?.message || 'Error al guardar la vacuna',
+      color: 'error',
+      icon: 'i-lucide-alert-circle'
+    })
+  }
+}
+
+const handleDeleteVaccine = async (id: string) => {
+  try {
+    await deleteVaccine(id)
+    
+    toast.add({
+      title: 'Vacuna eliminada',
+      color: 'success',
+      icon: 'i-lucide-check-circle'
+    })
+    
+    await loadPet()
+  } catch (error: any) {
+    toast.add({
+      title: 'Error',
+      description: error?.data?.message || 'Error al eliminar',
+      color: 'error',
+      icon: 'i-lucide-alert-circle'
+    })
+  }
+}
 </script>
 
 <template>
@@ -193,7 +261,7 @@ const handleDeleteTreatment = async (id: string) => {
     <div v-if="loadingPet" class="flex justify-center py-12">
       <UIcon name="i-lucide-loader-2" class="w-8 h-8 animate-spin text-primary-500" />
     </div>
-
+    
     <div v-else class="grid grid-cols-1 lg:grid-cols-5 gap-6">
       <div class="lg:col-span-3 space-y-6">
         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
@@ -230,16 +298,16 @@ const handleDeleteTreatment = async (id: string) => {
           </div>
         </div>
 
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 h-auto ">
           <h2 class="text-xl font-semibold mb-4 flex items-center gap-2 text-gray-900 dark:text-white">
             <UIcon name="i-lucide-user" class="w-5 h-5 text-vetcare-500" />
             Información del Dueño
           </h2>
           
-          <div class="space-y-3">
+          <div class="space-y-3 flex flex-row justify-baseline gap-6">
             <div>
               <label class="text-sm font-medium text-gray-500 dark:text-gray-400">Nombre</label>
-              <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ pet.owner.name }}</p>
+              <p class="  text-gray-900 dark:text-white">{{ pet.owner.name }}</p>
             </div>
             
             <div v-if="pet.owner.email">
@@ -258,31 +326,8 @@ const handleDeleteTreatment = async (id: string) => {
             </div>
           </div>
         </div>
-      </div>
-
-      <div class="lg:col-span-2 space-y-6">
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-          <div class="space-y-3 text-sm">
-            <div>
-              <label class="text-lg font-semibold mb-10 text-gray-900 dark:text-white">Historial de Citas</label>
-              <div v-if="!pet.appointments || pet.appointments.length === 0" class="text-center py-8 text-gray-500 dark:text-gray-400">
-                <UIcon name="i-lucide-calendar-x" class="w-8 h-8 mx-auto mb-2 opacity-50" />
-                <p>No hay citas registradas</p>
-              </div>
-              <PetsAppointmentPetDetail
-                v-for="appointment in pet.appointments"
-                :key="appointment.id"
-                :appointment="appointment"
-                :pet="pet"
-                class="mb-3 mt-3"
-                @edit="(id) => navigateTo(`/appointments/${id}`)"
-                @cancel="(id) => console.log('Lógica de cancelar', id)"
-              />
-            </div>
-          </div>
-        </div>
-
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        
+         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
           <div class="flex items-center justify-between mb-4">
             <div class="flex items-center gap-2">
               <UIcon name="i-lucide-syringe" class="w-5 h-5 text-vetcare-500" />
@@ -333,6 +378,82 @@ const handleDeleteTreatment = async (id: string) => {
                     icon="i-lucide-trash-2"
                     size="xs"
                   />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+
+      </div>
+
+      <div class="lg:col-span-2 space-y-6">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 max-h-[60vh] overflow-y-auto">
+          <div class="space-y-3 text-sm">
+            <div>
+              <label class="text-lg font-semibold mb-10 text-gray-900 dark:text-white">Historial de Citas</label>
+              <div v-if="!pet.appointments || pet.appointments.length === 0" class="text-center py-8 text-gray-500 dark:text-gray-400">
+                <UIcon name="i-lucide-calendar-x" class="w-8 h-8 mx-auto mb-2 opacity-50" />
+                <p>No hay citas registradas</p>
+              </div>
+              <PetsAppointmentPetDetail
+                v-for="appointment in pet.appointments"
+                :key="appointment.id"
+                :appointment="appointment"
+                :pet="pet"
+                class="mb-3 mt-3"
+                @edit="(id) => navigateTo(`/appointments/${id}`)"
+                @cancel="(id) => console.log('Lógica de cancelar', id)"
+              />
+            </div>
+          </div>
+        </div>
+
+       
+
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+          <h2 class="text-xl font-semibold mb-4 flex items-center gap-2 text-gray-900 dark:text-white">
+            <UIcon name="i-lucide-shield-plus" class="w-5 h-5 text-vetcare-500" />
+            Vacunas
+          </h2>
+          
+          <div v-if="!pet.vaccines || pet.vaccines.length === 0" class="text-center py-8 text-gray-500 dark:text-gray-400">
+            <UIcon name="i-lucide-shield-off" class="w-8 h-8 mx-auto mb-2 opacity-50" />
+            <p>No hay vacunas registradas</p>
+          </div>
+
+          <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div
+              v-for="vaccine in pet.vaccines"
+              :key="vaccine.id"
+              class="p-4 bg-gradient-to-br from-success-50 to-success-100 dark:from-success-900/20 dark:to-success-800/20 rounded-lg border border-success-200 dark:border-success-700"
+            >
+              <div class="flex items-center gap-2 mb-3">
+                <div class="p-2 bg-success-500 rounded-full h-8 w-8 flex items-center justify-center">
+                  <UIcon name="i-lucide-syringe" class="w-4 h-4 text-white" />
+                </div>
+                <h4 class="text-base font-bold text-gray-900 dark:text-white">{{ vaccine.name }}</h4>
+              </div>
+              
+              <div class="space-y-2 text-sm">
+                <div class="flex items-center gap-2 text-gray-700 dark:text-gray-200">
+                  <UIcon name="i-lucide-calendar-check" class="w-4 h-4 text-green-600 dark:text-green-400" />
+                  <span class="font-medium">Aplicada:</span>
+                  <span class="ml-auto font-semibold">{{ new Date(vaccine.appliedDate).toLocaleDateString('es-ES', { 
+                    day: 'numeric', 
+                    month: 'short', 
+                    year: 'numeric' 
+                  }) }}</span>
+                </div>
+                
+                <div class="flex items-center gap-2 text-gray-700 dark:text-gray-200">
+                  <UIcon name="i-lucide-calendar-clock" class="w-4 h-4 text-orange-600 dark:text-orange-400" />
+                  <span class="font-medium">Próxima:</span>
+                  <span class="ml-auto font-semibold">{{ new Date(vaccine.nextDose).toLocaleDateString('es-ES', { 
+                    day: 'numeric', 
+                    month: 'short', 
+                    year: 'numeric' 
+                  }) }}</span>
                 </div>
               </div>
             </div>
