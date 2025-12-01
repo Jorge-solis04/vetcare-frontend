@@ -52,7 +52,7 @@ const vetsOptions = computed(() => {
   return allVets.value.map((vet: Vet) => ({
     label: vet.name,
     value: vet.id,
-    speciality: vet.speacility
+    speciality: vet.specialty
   }))
 })
 
@@ -70,29 +70,35 @@ const handleCancel = () => {
 const dateOnly = ref('')
 const timeOnly = ref('')
 
-// ✅ Watch para combinar fecha y hora en formato ISO (corregido)
+// ✅ Watch para combinar fecha y hora en zona horaria CDMX (CORREGIDO)
 watch([dateOnly, timeOnly], ([date, time]) => {
   if (date && time) {
-    // Crear fecha local y convertir a ISO
-    const localDate = new Date(`${date}T${time}`)
-    state.date = localDate.toISOString()
+    // El input ya está en hora local, solo concatenar y parsear
+    const localDateTime = `${date}T${time}:00`
+    
+    // Crear Date object que automáticamente toma la zona horaria local
+    const dateObj = new Date(localDateTime)
+    
+    // Convertir a UTC (ISO String hace esto automáticamente)
+    state.date = dateObj.toISOString()
   }
 })
 
-// ✅ Si hay datos iniciales, separar fecha y hora (corregido)
+// ✅ Si hay datos iniciales, convertir de UTC a hora local CDMX (CORREGIDO)
 onMounted(() => {
   if (props.initialData?.date) {
-    const isoDate = new Date(props.initialData.date)
+    // Crear fecha UTC
+    const utcDate = new Date(props.initialData.date)
     
-    // Obtener fecha en formato local
-    const year = isoDate.getFullYear()
-    const month = String(isoDate.getMonth() + 1).padStart(2, '0')
-    const day = String(isoDate.getDate()).padStart(2, '0')
+    // Convertir a hora local del navegador (que debe ser CDMX)
+    const year = utcDate.getFullYear()
+    const month = String(utcDate.getMonth() + 1).padStart(2, '0')
+    const day = String(utcDate.getDate()).padStart(2, '0')
     dateOnly.value = `${year}-${month}-${day}`
     
-    // Obtener hora en formato local
-    const hours = String(isoDate.getHours()).padStart(2, '0')
-    const minutes = String(isoDate.getMinutes()).padStart(2, '0')
+    // Extraer hora local
+    const hours = String(utcDate.getHours()).padStart(2, '0')
+    const minutes = String(utcDate.getMinutes()).padStart(2, '0')
     timeOnly.value = `${hours}:${minutes}`
   }
 })
@@ -120,9 +126,7 @@ onMounted(() => {
             :disabled="!!props.initialData?.petId"
             :content="{ align: 'start' }" 
             :ui="{ content: 'w-full' }"
-          >
-            
-          </USelectMenu>
+          />
         </UFormField>
 
         <!-- Veterinario -->
@@ -139,9 +143,7 @@ onMounted(() => {
             :disabled="!!props.initialData?.vetId"
             :content="{ align: 'start' }" 
             :ui="{ content: 'w-full' }"
-          >
-            
-          </USelectMenu>
+          />
         </UFormField>
       </div>
     </div>
@@ -170,15 +172,13 @@ onMounted(() => {
             icon="i-lucide-clock"
           />
         </UFormField>
-
-        
       </div>
     </div>
 
     <!-- Preview de los datos (opcional) -->
     <div v-if="true" class="bg-gray-50 dark:bg-gray-900/50 rounded-lg p-4">
-      <h4 class="text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Vista previa del JSON:</h4>
-      <pre class="text-xs bg-gray-900 text-green-400 p-3 rounded overflow-x-auto">{{ JSON.stringify(state, null, 2) }}</pre>
+      <h4 class="text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Vista previa:</h4>
+      <pre class="text-xs bg-gray-900 text-green-400 p-3 rounded overflow-x-auto">{{ JSON.stringify({ dateOnly, timeOnly, resultISO: state.date }, null, 2) }}</pre>
     </div>
 
     <!-- Botones de acción -->
@@ -195,7 +195,7 @@ onMounted(() => {
       </UButton>
       <UButton 
         type="submit" 
-        color="primary" 
+        color="success" 
         size="lg"
         :loading="loading"
         icon="i-lucide-save"

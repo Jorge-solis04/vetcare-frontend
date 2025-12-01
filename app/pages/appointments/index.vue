@@ -121,19 +121,20 @@ const reactivateAppointment = async(id: string, data: AppointmentPayload) =>{
   }
 }
 
-// ✅ Formatear fecha para mostrar (corregido)
+// ✅ Formatear fecha para mostrar (corregido para CDMX)
 const formattedDate = computed(() => {
   if (!selectedDate.value) return ''
   
-  // Usar directamente los valores del CalendarDate sin conversión a Date
   const date = selectedDate.value
+  // Crear fecha en zona horaria local
   const jsDate = new Date(date.year, date.month - 1, date.day)
   
-  return jsDate.toLocaleDateString('es-ES', {
+  return jsDate.toLocaleDateString('es-MX', {
     weekday: 'long',
     year: 'numeric',
     month: 'long',
-    day: 'numeric'
+    day: 'numeric',
+    timeZone: 'America/Mexico_City'
   })
 })
 

@@ -12,8 +12,10 @@ const handleDelete = async (id: number) => {
   try {
     await deleteVet(id.toString()) // Asumiendo que tu composable espera string
     toast.add({ title: 'Veterinario eliminado', color: 'success' })
-  } catch (e) {
-    toast.add({ title: 'Error al eliminar', color: 'error' })
+  } catch (e: any) {
+    const errorMessage =
+      e?.data?.message || e?.message || "No se puede eliminar el veterinario porque está vinculado a otros registros.";
+    toast.add({ title: 'Error al eliminar', description: errorMessage, color: 'error' })
   }
 }
 
@@ -102,7 +104,7 @@ const columns: TableColumn<Vet>[] = [
     description="Administra la información de los veterinarios de la clinica"
     buttonTitle="Nuevo Veterinario"
     path="/vets/create"
-    icon="i-lucide-stethoscope"
+    icon="stethoscope"
   >
     <UInput 
       v-model="searchQuery" 

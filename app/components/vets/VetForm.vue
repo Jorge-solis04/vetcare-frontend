@@ -98,7 +98,7 @@ const handleCancel = () => {
     </div>
 
     <!-- Preview de los datos (opcional, solo en desarrollo) -->
-    <div v-if="true" class="bg-gray-50 dark:bg-gray-900/50 rounded-lg p-4">
+    <div v-if="false" class="bg-gray-50 dark:bg-gray-900/50 rounded-lg p-4">
       <h4 class="text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Vista previa del JSON:</h4>
       <pre class="text-xs bg-gray-900 text-green-400 p-3 rounded overflow-x-auto">{{ JSON.stringify(state, null, 2) }}</pre>
     </div>

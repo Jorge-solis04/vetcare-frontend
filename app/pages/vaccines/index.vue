@@ -10,6 +10,17 @@ import type { Vaccine, VaccinePayload } from "~~/types";
 
 const { vaccines, allVaccines, pending, error, searchQuery, deleteVaccine } = useVaccines();
 
+const formatLocalDate = (dateString: string) => {
+  const date = new Date(dateString);
+  // Ajustar por la diferencia de zona horaria
+  const localDate = new Date(date.getTime() + date.getTimezoneOffset() * 60000);
+  return localDate.toLocaleDateString("es-ES", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+};
+
 const columns: TableColumn<Vaccine>[] = [
   {
     accessorKey: "name",
@@ -34,24 +45,14 @@ const columns: TableColumn<Vaccine>[] = [
     accessorKey: "appliedDate",
     header: "Fecha de Aplicación",
     cell: ({ row }) => {
-      const date = new Date(row.getValue("appliedDate") as string);
-      return date.toLocaleDateString("es-ES", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-      });
+      return formatLocalDate(row.getValue("appliedDate") as string);
     },
   },
   {
     accessorKey: "nextDose",
     header: "Próxima Dosis",
     cell: ({ row }) => {
-      const date = new Date(row.getValue("nextDose") as string);
-      return date.toLocaleDateString("es-ES", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-      });
+      return formatLocalDate(row.getValue("nextDose") as string);
     },
   },
   {

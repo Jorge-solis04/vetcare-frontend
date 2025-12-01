@@ -1,25 +1,33 @@
 <script setup lang="ts">
-import { h, resolveComponent } from 'vue'
-import type { TableColumn} from "@nuxt/ui"
+import { h, resolveComponent } from "vue";
+import type { TableColumn } from "@nuxt/ui";
 import type { Row } from "@tanstack/vue-table";
-import type { Owner } from '../../../types'
+import type { Owner } from "../../../types";
 
-const { owners, pending, searchQuery, deleteOwner } = useOwners()
-const toast = useToast()
+const { owners, pending, searchQuery, deleteOwner } = useOwners();
+const toast = useToast();
 
 const handleDelete = async (id: number) => {
-  if (!confirm(`¿Estás seguro de eliminar este dueño?`)) return
+  if (!confirm(`¿Estás seguro de eliminar este dueño?`)) return;
   try {
-    await deleteOwner(id.toString()) // Asumiendo que tu composable espera string
-    toast.add({ title: 'Dueño eliminado', color: 'success' })
-  } catch (e) {
-    toast.add({ title: 'Error al eliminar', color: 'error' })
-  }
-}
+    await deleteOwner(id.toString()); // Asumiendo que tu composable espera string
+    toast.add({ title: "Dueño eliminado", color: "success" });
+  } catch (e: any) {
+
+    const errorMessage =
+      e?.data?.message || e?.message || "No se puede eliminar el dueño porque está vinculado a otros registros.";
+
+    toast.add({
+      title: "Error al eliminar",
+      description: "" + errorMessage,
+      color: "error",
+    });
+  } 
+};
 
 // 3. Resolver componentes para las Render Functions
-const UButton = resolveComponent('UButton')
-const UDropdownMenu = resolveComponent('UDropdownMenu')
+const UButton = resolveComponent("UButton");
+const UDropdownMenu = resolveComponent("UDropdownMenu");
 
 // 4. Definición del menú de acciones (Dropdown)
 function getRowItems(row: Row<Owner>) {
@@ -32,7 +40,7 @@ function getRowItems(row: Row<Owner>) {
       label: "Ver / Editar",
       icon: "i-lucide-edit",
       onSelect() {
-        navigateTo(`/owners/${row.original.id}`)
+        navigateTo(`/owners/${row.original.id}`);
       },
     },
     {
@@ -40,10 +48,10 @@ function getRowItems(row: Row<Owner>) {
       icon: "i-lucide-trash-2",
       color: "danger",
       onSelect() {
-        handleDelete(row.original.id)
+        handleDelete(row.original.id);
       },
     },
-  ]
+  ];
 }
 
 // 5. Definición de Columnas "Senior Style"
@@ -52,23 +60,33 @@ const columns: TableColumn<Owner>[] = [
   {
     accessorKey: "name",
     header: "Nombre Completo",
-    cell: ({ row }) => h('span', { class: 'font-medium text-gray-900 dark:text-white' }, row.getValue("name")),
+    cell: ({ row }) =>
+      h(
+        "span",
+        { class: "font-medium text-gray-900 dark:text-white" },
+        row.getValue("name")
+      ),
   },
   // Columna Contacto (Combinada: Email + Teléfono)
   {
     accessorKey: "email", // Usamos email como llave principal
     header: "E-mail",
-    cell: ({ row }) => h('span', { class: 'text-sm' }, row.getValue("email")),
+    cell: ({ row }) => h("span", { class: "text-sm" }, row.getValue("email")),
   },
   {
     accessorKey: "phone",
     header: "Teléfono",
-    cell: ({ row }) => h('span', { class: 'text-sm' }, row.getValue("phone")),
+    cell: ({ row }) => h("span", { class: "text-sm" }, row.getValue("phone")),
   },
   {
     accessorKey: "createdAt",
     header: "Cliente Desde",
-    cell: ({ row }) => h('span', { class: 'text-sm' }, row.getValue("createdAt").toString().split('T')[0]),
+    cell: ({ row }) =>
+      h(
+        "span",
+        { class: "text-sm" },
+        row.getValue("createdAt").toString().split("T")[0]
+      ),
   },
   // Columna Acciones
   {
@@ -92,10 +110,10 @@ const columns: TableColumn<Owner>[] = [
               class: "ml-auto",
             })
         )
-      )
+      );
     },
   },
-]
+];
 </script>
 
 <template>
@@ -106,10 +124,10 @@ const columns: TableColumn<Owner>[] = [
     path="/owners/create"
     icon="users"
   >
-    <UInput 
-      v-model="searchQuery" 
-      placeholder="Buscar por nombre, email, teléfono o antigüedad" 
-      icon="i-lucide-search" 
+    <UInput
+      v-model="searchQuery"
+      placeholder="Buscar por nombre, email, teléfono o antigüedad"
+      icon="i-lucide-search"
       class="mb-6 w-full max-w-md"
       :ui="{ icon: { trailing: { pointer: '' } } }"
     >
@@ -126,25 +144,38 @@ const columns: TableColumn<Owner>[] = [
     </UInput>
 
     <div v-if="pending" class="flex justify-center py-12">
-      <UIcon name="i-lucide-loader-2" class="w-8 h-8 animate-spin text-primary-500" />
+      <UIcon
+        name="i-lucide-loader-2"
+        class="w-8 h-8 animate-spin text-primary-500"
+      />
     </div>
 
-    <div v-else-if="error" class="text-center py-12 bg-red-50 dark:bg-red-900/10 rounded-lg">
-      <UIcon name="i-lucide-alert-circle" class="w-12 h-12 text-red-500 mx-auto mb-4" />
-      <h3 class="text-lg font-medium text-red-700 dark:text-red-400">Error al cargar datos</h3>
-      <p class="text-red-600 dark:text-red-500 text-sm">Por favor, intenta recargar la página.</p>
+    <div
+      v-else-if="error"
+      class="text-center py-12 bg-red-50 dark:bg-red-900/10 rounded-lg"
+    >
+      <UIcon
+        name="i-lucide-alert-circle"
+        class="w-12 h-12 text-red-500 mx-auto mb-4"
+      />
+      <h3 class="text-lg font-medium text-red-700 dark:text-red-400">
+        Error al cargar datos
+      </h3>
+      <p class="text-red-600 dark:text-red-500 text-sm">
+        Por favor, intenta recargar la página.
+      </p>
     </div>
 
-    <UTable 
-      v-else 
+    <UTable
+      v-else
       sticky
-      :data="owners || []" 
-      :columns="columns" 
+      :data="owners || []"
+      :columns="columns"
       class="flex-1 max-h-[600px]"
-      :empty-state="{ 
-        icon: 'i-lucide-users', 
+      :empty-state="{
+        icon: 'i-lucide-users',
         label: 'No hay dueños registrados',
-        description: 'Comienza creando un nuevo registro.'
+        description: 'Comienza creando un nuevo registro.',
       }"
       :ui="{
         root: 'bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden',

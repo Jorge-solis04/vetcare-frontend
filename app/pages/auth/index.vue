@@ -1,10 +1,36 @@
 <script setup lang="ts">
 import { useAuthStore } from '~/store/auth'
-
+const toast = useToast()
 const authStore = useAuthStore()
 
+const {registerUser} = useRegister()
 const { profile, pending, error, formatDate, formatTime, getInitials } = useProfile()
-console.log(profile)    
+console.log(profile)  
+const openModal = ref(false)  
+
+const handleSubmit = async (data: RegisterPayload) => {
+  try {
+    await registerUser(data)
+    openModal.value = false
+    toast.add({
+      title: 'Usuario registrado',
+      description: 'El nuevo usuario ha sido registrado exitosamente.',
+      color: 'success',
+    })
+
+  } catch (err:any) {
+
+    console.error('Error al registrar usuario:', err)
+    const errorMessage = err.data.message
+    toast.add({
+      title: 'Error',
+      description: errorMessage,
+      color: 'error',
+    })
+    openModal.value = false
+
+  }
+}
 </script>
 
 <template>
@@ -44,6 +70,7 @@ console.log(profile)
             
           </div>
         </div>
+        <UButton class="mt-4" size="lg" color="success" title="Agregar Usuarios" icon="i-lucide-user-plus" @click="openModal = true">Agregar Usuarios</UButton>
       </div>
 
       <!-- Información Detallada -->
@@ -124,4 +151,7 @@ console.log(profile)
       </div>
     </div>
   </div>
+
+
+  <RegisterForm :open="openModal" @close="openModal = false" @submit="handleSubmit" />
 </template>
