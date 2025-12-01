@@ -116,9 +116,16 @@ export interface AppointmentPayload {
 export interface Vet {
   id: string;
   name: string;
-  speacility: string;
+  specialty: string;
   isActive: boolean;
 }
+export interface VetPayload {
+  name: string;
+  specialty: string;
+  isActive?: boolean;
+}
+
+export type CreateVetInput = Omit<Vet, 'id' | 'createdAt'>;
 
 export interface DashboardStats {
   appointmentsToday: AppointmentToday[];

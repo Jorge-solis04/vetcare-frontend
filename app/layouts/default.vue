@@ -97,6 +97,8 @@ const links = [
   { label: 'Agenda', icon: 'i-lucide-calendar', to: '/appointments/' },
   { label: 'Dueños', icon: 'i-lucide-users', to: '/owners/' },
   { label: 'Pacientes', icon: 'i-lucide-cat', to: '/pets/' },
+  { label: 'Agenda', icon: 'i-lucide-calendar', to: '/appointments/' },
+  { label: 'Veterinarios', icon:'i-lucide-stethoscope', to: '/vets/'},
   {label: 'Vacunas', icon:"i-lucide-syringe", to: '/vaccines/' }
 ]
 
