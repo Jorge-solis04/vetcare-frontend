@@ -18,7 +18,7 @@ const formatTime = (dateString: string) => {
   })
 }
 
-console.log('Stats:', stats.value)
+console.log('Stats:', appointmentsToday)
 
 </script>
 

@@ -50,7 +50,7 @@ const handleUpdate = async (data: VaccinePayload) => {
       icon: 'i-lucide-check-circle'
     })
     
-    router.push('/pets')
+    router.push('/vaccines')
   } catch (error: any) {
     const errorMessage = error?.data?.message || 'Error al actualizar la mascota'
     

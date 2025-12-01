@@ -57,12 +57,14 @@ const cancelAppointment = async (id: string, data: AppointmentPayload) => {
       color: 'success',
       duration: 3000,
     })
-  } catch (error) {
+  } catch (error:any) {
+    const errorMessage = error?.data?.message || 'Error al crear la mascota'
+
     console.error('Error deleting appointment:', error)
     toast.add({
       title: 'Error',
       icon: 'i-lucide-alert-circle',
-      description: 'No se pudo cancelar la cita. Inténtalo de nuevo.',
+      description: errorMessage,
       color: 'error',
       duration: 3000,
     })
@@ -81,12 +83,13 @@ const completeAppointment = async(id: string, data: AppointmentPayload) =>{
       color: 'success',
       duration: 3000,
     })
-  } catch (error) {
+  } catch (error:any) {
+    const errorMessage = error?.data?.message || 'Error al crear la mascota'
     console.error('Error updating appointment:', error)
     toast.add({
       title: 'Error',
       icon: 'i-lucide-alert-circle',
-      description: 'No se pudo completar la cita. Inténtalo de nuevo.',
+      description: errorMessage,
       color: 'error',
       duration: 3000,
     })
@@ -105,31 +108,33 @@ const reactivateAppointment = async(id: string, data: AppointmentPayload) =>{
       color: 'success',
       duration: 3000,
     })
-  } catch (error) {
+  } catch (error:any) {
+    const errorMessage = error?.data?.message || 'Error al crear la mascota'
     console.error('Error updating appointment:', error)
     toast.add({
       title: 'Error',
       icon: 'i-lucide-alert-circle',
-      description: 'No se pudo reactivar la cita. Inténtalo de nuevo.',
+      description: errorMessage,
       color: 'error',
       duration: 3000,
     })
   }
 }
 
-// ✅ Formatear fecha para mostrar (corregido)
+// ✅ Formatear fecha para mostrar (corregido para CDMX)
 const formattedDate = computed(() => {
   if (!selectedDate.value) return ''
   
-  // Usar directamente los valores del CalendarDate sin conversión a Date
   const date = selectedDate.value
+  // Crear fecha en zona horaria local
   const jsDate = new Date(date.year, date.month - 1, date.day)
   
-  return jsDate.toLocaleDateString('es-ES', {
+  return jsDate.toLocaleDateString('es-MX', {
     weekday: 'long',
     year: 'numeric',
     month: 'long',
-    day: 'numeric'
+    day: 'numeric',
+    timeZone: 'America/Mexico_City'
   })
 })
 

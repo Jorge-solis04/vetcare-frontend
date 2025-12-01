@@ -2,6 +2,7 @@
 import { defineStore } from 'pinia'
 import type { User, AuthResponse } from '~~/types/index'
 
+
 export const useAuthStore = defineStore('auth', {
   state: () => ({
     token: null as string | null,
