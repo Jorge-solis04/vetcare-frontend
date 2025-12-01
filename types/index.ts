@@ -165,3 +165,12 @@ export interface VaccinePayload{
   nextDose : string
   petId: string
 }
+
+export interface Profile{
+  user:{
+    id: string
+    email: string
+    name: string
+    role: string
+  }
+}
